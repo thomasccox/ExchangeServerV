@@ -116,6 +116,7 @@ def get_eth_keys(filename="eth_mnemonic.txt"):
     # the ethereum public/private keys
     acct = w3.eth.account.from_mnemonic(mnemonic_secret)
     eth_pk = acct._address
+    print(eth_pk)
     eth_sk = acct._private_key
 
     return eth_sk, eth_pk
