@@ -103,15 +103,20 @@ def log_message(message_dict):
 def get_algo_keys():
     # TODO: Generate or read (using the mnemonic secret)
     # the algorand public/private keys
-    algo_sk, algo_pk = algodsk.generate_account();
+    mnemonic_secret = "maximum there honey circle slogan shiver auto chronic sphere base hobby repeat success glow trash trophy install rain coast proud country hurry glow absorb bicycle"
+    algo_sk = mnemonic.to_private_key(mnemonic_secret)
+    algo_pk = mnemonic.to_public_key(mnemonic_secret)
     return algo_sk, algo_pk
 
 
 def get_eth_keys(filename="eth_mnemonic.txt"):
     w3 = Web3()
-
+    mnemonic_secret = "until wonder replace chaos unaware nut safe garbage hip yard special fancy"
     # TODO: Generate or read (using the mnemonic secret)
     # the ethereum public/private keys
+    acct = w3.eth.account.from_mnemonic(mnemonic_secret)
+    eth_pk = acct._address
+    eth_sk = acct._private_key
 
     return eth_sk, eth_pk
 
@@ -181,9 +186,11 @@ def address():
 
         if content['platform'] == "Ethereum":
             # Your code here
+            eth_sk, eth_pk = get_eth_keys()
             return jsonify(eth_pk)
         if content['platform'] == "Algorand":
             # Your code here
+            alog_sk, alog_pk = get_algo_keys()
             return jsonify(algo_pk)
 
 
