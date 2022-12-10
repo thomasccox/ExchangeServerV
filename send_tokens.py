@@ -8,16 +8,21 @@ from algosdk.future import transaction
 def connect_to_algo(connection_type=''):
     #Connect to Algorand node maintained by PureStake
     algod_token = "B3SU4KcVKi94Jap2VXkK83xx38bsv95K5UZm2lab"
-    
+
     if connection_type == "indexer":
         # TODO: return an instance of the v2client indexer. This is used for checking payments for tx_id's
         algod_address = "https://testnet-algorand.api.purestake.io/idx2"
+        headers = {'X-Api-key': algod_token,}
+        acl = algod.AlgodClient(algod_token, algod_address, headers)
+
     else:
         # TODO: return an instance of the client for sending transactions
         # Tutorial Link: https://developer.algorand.org/tutorials/creating-python-transaction-purestake-api/
         algod_address = "https://testnet-algorand.api.purestake.io/ps2"
+        headers = {'X-Api-key': algod_token,}
+        acl = algod.AlgodClient(algod_token, algod_address, headers)
 
-    return None
+    return acl
 
 def send_tokens_algo( acl, sender_sk, txes):
     params = acl.suggested_params
@@ -118,6 +123,10 @@ def send_tokens_eth(w3,sender_sk,txes):
     tx_ids = []
     for i,tx in enumerate(txes):
         # Your code here
+        w3 = connect_to_eth()
+        
+        signed_txn = w3.eth.account.sign_transaction(tx_dict, sender_sk)
+        tx_id = w3.eth.send_raw_transaction(signed_txn.rawTransaction)
         continue
 
     return tx_ids
