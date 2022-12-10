@@ -117,13 +117,54 @@ def get_eth_keys(filename = "eth_mnemonic.txt"):
 
     return eth_sk, eth_pk
   
-def fill_order(order, txes=[]):
+#def fill_order(order, txes=[]):
     # TODO: 
     # Match orders (same as Exchange Server II)
     # Validate the order has a payment to back it (make sure the counterparty also made a payment)
     # Make sure that you end up executing all resulting transactions!
     
     pass
+
+def fill_order(order, existing, txes=[]):
+    order.counterpart_id = existing.id
+    order.counterparty.append(existing)
+    g.session.commit()
+    existing.counterpart_id = order.id
+    existing.counterparty.append(order)
+    # session.commit()
+    tstamp = datetime.now()
+    order.filled = tstamp
+    existing.filled = tstamp
+    g.session.commit()
+    if existing.buy_amount > order.sell_amount:
+        add_child(existing, order)
+    if order.buy_amount > existing.sell_amount:
+        add_child(order, existing)
+
+
+def add_child(buyer, seller):
+    child_buy = buyer.buy_amount - seller.sell_amount
+    child_sell = (buyer.sell_amount / buyer.buy_amount) * (buyer.buy_amount - seller.sell_amount)
+    child = buyer
+    child_obj = create_child(child, child_buy, child_sell)
+    buyer.child.append(child_obj)
+    g.session.commit()
+
+
+def create_child(child, buy, sell):
+    child_order = {}
+    child_order['creator_id'] = child.id
+    child_order['sender_pk'] = child.sender_pk
+    child_order['receiver_pk'] = child.receiver_pk
+    child_order['buy_currency'] = child.buy_currency
+    child_order['sell_currency'] = child.sell_currency
+    child_order['buy_amount'] = buy
+    child_order['sell_amount'] = sell
+    fields = ['sender_pk', 'receiver_pk', 'buy_currency', 'sell_currency', 'buy_amount', 'sell_amount']
+    child_obj = Order(**{f: child_order[f] for f in fields})
+    g.session.add(child_obj)
+    g.session.commit()
+    return child_obj
   
 def execute_txes(txes):
     if txes is None:
@@ -161,7 +202,31 @@ def check_sig(payload, sig):
         if eth_account.Account.recover_message(eth_encoded_msg, signature=sig) == payload['sender_pk']:
             result = True
     return result
+#TC Check transaction
+def check_tx(payload):
+    w3 = Web3()
+    if (payload['sell_currency'] == "Algorand"):
+        acl = connect_to_algo('indexer')
+        tx_list = acl.search_transactions(txid = payload['tx_id'], min_amount = payload['sell_amount'], max_amount = payload['sell_amount'])
+        if(tx_list.len() > 0):
+            return True
+    elif (payload['sell_currency'] == "Ethereum"):
+        tx = w3.eth.get_transaction(payload['tx_id'])
+        if(str(tx.value) == payload['sell_amount']):
+            return True
+    return False
+#TC Find match
+def find_match(order):
+    sell_currency = order.sell_currency
+    buy_currency = order.buy_currency
+    potential_matches = g.session.query(Order).filter(Order.buy_currency == sell_currency,
+                                                    Order.sell_currency == buy_currency).all()
 
+    for o in potential_matches:
+        if o.filled is None:
+            if o.sell_amount / o.buy_amount >= order.buy_amount / order.sell_amount:
+                return o
+    return None
 """ End of Helper methods"""
   
 @app.route('/address', methods=['POST'])
@@ -224,16 +289,14 @@ def trade():
                           buy_amount=payload['buy_amount'], sell_amount=payload['sell_amount'], signature=sig)
         g.session.add(order_obj)
         g.session.commit()
-
-
         # 3a. Check if the order is backed by a transaction equal to the sell_amount (this is new)
-        acl = connect_to_algo('indexer')
-        acl.search_transactions(payload['tx_id'])
+        result = check_tx(payload)
         # 3b. Fill the order (as in Exchange Server II) if the order is valid
+        if result:
         existing = find_match(order_obj)
-        if existing is not None:
-            fill_order(order_obj, existing)
-            return jsonify(True)
+            if existing is not None:
+                fill_order(order_obj, existing)
+                #return jsonify(True)
         # 4. Execute the transactions
 
     else:
