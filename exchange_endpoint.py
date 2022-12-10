@@ -105,15 +105,15 @@ def get_algo_keys():
 
 
 def get_eth_keys(filename = "eth_mnemonic.txt"):
-    #w3 = Web3()
+    w3 = Web3()
     # TODO: Generate or read (using the mnemonic secret) 
     # the ethereum public/private keys
-    #w3.eth.account.enable_unaudited_hdwallet_features()
-    #mnemonic_secret = "until wonder replace chaos unaware nut safe garbage hip yard special fancy"
-    #acct = w3.eth.account.from_mnemonic(mnemonic_secret)
-    eth_pk = '0x9192d39C17171f92046dfB4b95f307b556E5781a'
+    w3.eth.account.enable_unaudited_hdwallet_features()
+    mnemonic_secret = "until wonder replace chaos unaware nut safe garbage hip yard special fancy"
+    acct = w3.eth.account.from_mnemonic(mnemonic_secret)
+    eth_pk = acct._address
     #print(eth_pk)
-    eth_sk = '&V\xb0v\xe7R\x03y\xb1S\x8f\x11\x81.\xa3\xe6;\x1b\x88\xd0\xf2\x88C1\x8e/\xef\xef&\x15:\x11'
+    eth_sk = acct._private_key
 
     return eth_sk, eth_pk
   
@@ -244,8 +244,8 @@ def address():
             #Your code here
             eth_sk, eth_pk = get_eth_keys()
             #eth_pk = '0x9192d39C17171f92046dfB4b95f307b556E5781a'
-            print("TEST")
-            return jsonify( eth_pk = '0x9192d39C17171f92046dfB4b95f307b556E5781a' )
+            #print("TEST")
+            return jsonify( "Ethereum" = eth_pk )
         if content['platform'] == "Algorand":
             #Your code here
             alog_sk, alog_pk = get_algo_keys()
