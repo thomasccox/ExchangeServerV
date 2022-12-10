@@ -295,11 +295,11 @@ def trade():
         result = check_tx(payload)
         # 3b. Fill the order (as in Exchange Server II) if the order is valid
         if result:
-        existing = find_match(order_obj)
+            existing = find_match(order_obj)
             if existing is not None:
                 fill_order(order_obj, existing)
-                #return jsonify(True)
-        # 4. Execute the transactions
+                    #return jsonify(True)
+            # 4. Execute the transactions
 
     else:
       log_message(payload)
