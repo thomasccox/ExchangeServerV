@@ -231,7 +231,6 @@ def find_match(order):
   
 @app.route('/address', methods=['POST'])
 def address():
-    print("TEST")
     if request.method == "POST":
         content = request.get_json(silent=True)
         if 'platform' not in content.keys():
