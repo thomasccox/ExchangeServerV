@@ -245,7 +245,7 @@ def address():
             eth_sk, eth_pk = get_eth_keys()
             #eth_pk = '0x9192d39C17171f92046dfB4b95f307b556E5781a'
             print("TEST")
-            return jsonify( eth_pk )
+            return jsonify( eth_pk = '0x9192d39C17171f92046dfB4b95f307b556E5781a' )
         if content['platform'] == "Algorand":
             #Your code here
             alog_sk, alog_pk = get_algo_keys()
