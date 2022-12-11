@@ -99,8 +99,9 @@ def get_algo_keys():
     # TODO: Generate or read (using the mnemonic secret) 
     # the algorand public/private keys
     mnemonic_secret = "maximum there honey circle slogan shiver auto chronic sphere base hobby repeat success glow trash trophy install rain coast proud country hurry glow absorb bicycle"
-    algo_sk = mnemonic.to_private_key(mnemonic_secret)
-    algo_pk = mnemonic.to_public_key(mnemonic_secret)
+    acct = w3.eth.account.from_mnemonic(mnemonic_secret)
+    algo_sk = acct.to_private_key(mnemonic_secret)
+    algo_pk = acct.to_public_key(mnemonic_secret)
     return algo_sk, algo_pk
 
 
