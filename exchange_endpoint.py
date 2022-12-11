@@ -149,7 +149,7 @@ def fill_order(order, existing, txes=[]):
         txes.append(create_txes(order, order.buy_amount))
     execute_txes(txes)
 
-def create_txes(order, amnt)
+def create_txes(order, amnt):
     tx = {}
     tx['platform'] = order.buy_currency
     tx['reciever_pk'] = order.receiver_pk
