@@ -122,11 +122,19 @@ def send_tokens_eth(w3,sender_sk,txes):
     
     tx_ids = []
     for i,tx in enumerate(txes):
-        # Your code here
-        w3 = connect_to_eth()
-        
+        # Your code here  
+        reciever_pk = tx.reciever
+        tx_amount = tx.amt
+        tx_dict = {
+                'nonce': w3.eth.get_transaction_count(sender_pk,"pending"),
+                'gasPrice':w3.eth.gas_price,
+                'gas': w3.eth.estimate_gas( { 'from': sender_pk, 'to': receiver_pk, 'data': b'', 'amount': tx_amount } ),
+                'to': receiver_pk,
+                'value': tx_amount,
+                'data':b'' }
         signed_txn = w3.eth.account.sign_transaction(tx_dict, sender_sk)
         tx_id = w3.eth.send_raw_transaction(signed_txn.rawTransaction)
+        tx_ids.append(tx_id)
         continue
 
     return tx_ids
