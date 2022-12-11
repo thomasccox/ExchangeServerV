@@ -123,8 +123,8 @@ def send_tokens_eth(w3,sender_sk,txes):
     tx_ids = []
     for i,tx in enumerate(txes):
         # Your code here  
-        reciever_pk = tx.reciever
-        tx_amount = tx.amt
+        reciever_pk = tx['receiver_pk']
+        tx_amount = tx['value']
         tx_dict = {
                 'nonce': w3.eth.get_transaction_count(sender_pk,"pending"),
                 'gasPrice':w3.eth.gas_price,
