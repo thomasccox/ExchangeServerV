@@ -148,7 +148,7 @@ def fill_order(order, existing, txes=[]):
     else: 
         txes.append(create_txes(order, order.buy_amount))
     execute_txes(txes)
-    
+
 def create_txes(order, amnt)
     tx = {}
     tx['platform'] = order.buy_currency
@@ -315,7 +315,7 @@ def trade():
             existing = find_match(order_obj)
             if existing is not None:
                 fill_order(order_obj, existing)
-                    #return jsonify(True)
+                    return jsonify(True)
             # 4. Execute the transactions
 
     else:
