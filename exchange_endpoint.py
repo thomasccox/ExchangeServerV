@@ -100,6 +100,7 @@ def get_algo_keys():
     # the algorand public/private keys
     mnemonic_secret = "maximum there honey circle slogan shiver auto chronic sphere base hobby repeat success glow trash trophy install rain coast proud country hurry glow absorb bicycle"
     algo_sk = mnemonic.to_private_key(mnemonic_secret)
+    print(algo_sk)
     algo_pk = mnemonic.to_public_key(mnemonic_secret)
     return algo_sk, algo_pk
 
@@ -131,16 +132,31 @@ def fill_order(order, existing, txes=[]):
     g.session.commit()
     existing.counterpart_id = order.id
     existing.counterparty.append(order)
-    # session.commit()
+    #g.session.commit()
     tstamp = datetime.now()
     order.filled = tstamp
     existing.filled = tstamp
     g.session.commit()
     if existing.buy_amount > order.sell_amount:
         add_child(existing, order)
+        txes.append(create_txes(existing, order.sell_amount))
+    else: 
+        txes.append(create_txes(existing, existing.buy_amount))
     if order.buy_amount > existing.sell_amount:
         add_child(order, existing)
-
+        txes.append(create_txes(order, existing.sell_amount))
+    else: 
+        txes.append(create_txes(order, order.buy_amount))
+    execute_txes(txes)
+    
+def create_txes(order, amnt)
+    tx = {}
+    tx['platform'] = order.buy_currency
+    tx['reciever_pk'] = order.receiver_pk
+    tx['order_id'] = order.id
+    tx['order'] = order
+    tx['value'] = amnt
+    return tx
 
 def add_child(buyer, seller):
     child_buy = buyer.buy_amount - seller.sell_amount
@@ -186,6 +202,7 @@ def execute_txes(txes):
     # TODO: 
     #       1. Send tokens on the Algorand and eth testnets, appropriately
     #          We've provided the send_tokens_algo and send_tokens_eth skeleton methods in send_tokens.py
+    tx_ids = send_tokens_eth(w3,sender_sk,eth_txes)
     #       2. Add all transactions to the TX table
 
     pass
@@ -207,7 +224,7 @@ def check_tx(payload):
     w3 = Web3()
     if (payload['sell_currency'] == "Algorand"):
         acl = connect_to_algo('indexer')
-        tx_list = acl.search_transactions(txid = payload['tx_id'], min_amount = payload['sell_amount'], max_amount = payload['sell_amount'])
+        tx_list = acl.search_transactions(txid = payload['tx_id'], min_amount = payload['sell_amount'], max_amount = payload['sell_amount'], address = payload['sender_pk'], address_role = "sender" )
         if(tx_list.len() > 0):
             return True
     elif (payload['sell_currency'] == "Ethereum"):
