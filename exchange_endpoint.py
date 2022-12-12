@@ -12,6 +12,7 @@ from datetime import datetime
 import math
 import sys
 import traceback
+from algosdk import mnemonic
 
 # TODO: make sure you implement connect_to_algo, send_tokens_algo, and send_tokens_eth
 from send_tokens import connect_to_algo, connect_to_eth, send_tokens_algo, send_tokens_eth
@@ -90,7 +91,7 @@ def log_message(message_dict):
     msg = json.dumps(message_dict)
 
     # TODO: Add message to the Log table
-    log_obj = Log(message=json.dumps(d))
+    log_obj = Log(message=msg)
     g.session.add(log_obj)
     g.session.commit()
 
@@ -221,10 +222,10 @@ def check_sig(payload, sig):
     return result
 #TC Check transaction
 def check_tx(payload):
-    w3 = Web3()
+    w3 = connect_to_eth()
     if (payload['sell_currency'] == "Algorand"):
         acl = connect_to_algo('indexer')
-        tx_list = acl.search_transactions(txid = payload['tx_id'], min_amount = payload['sell_amount'], max_amount = payload['sell_amount'], address = payload['sender_pk'], address_role = "sender" )
+        tx_list = acl.search_transactions(payload['tx_id'])
         if(tx_list.len() > 0):
             return True
     elif (payload['sell_currency'] == "Ethereum"):
@@ -265,14 +266,14 @@ def address():
             return jsonify( eth_pk )
         if content['platform'] == "Algorand":
             #Your code here
-            alog_sk, alog_pk = get_algo_keys()
+            alog_sk, algo_pk = get_algo_keys()
             return jsonify( algo_pk )
 
 @app.route('/trade', methods=['POST'])
 def trade():
     print( "In trade", file=sys.stderr )
     connect_to_blockchains()
-    get_keys()
+    #get_keys()
     if request.method == "POST":
         content = request.get_json(silent=True)
         columns = [ "buy_currency", "sell_currency", "buy_amount", "sell_amount", "platform", "tx_id", "receiver_pk"]
@@ -315,7 +316,7 @@ def trade():
             existing = find_match(order_obj)
             if existing is not None:
                 fill_order(order_obj, existing)
-                    return jsonify(True)
+                return jsonify(True)
             # 4. Execute the transactions
 
     else:
