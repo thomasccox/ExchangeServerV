@@ -14,11 +14,10 @@ import sys
 import traceback
 from algosdk import mnemonic
 
-
 # TODO: make sure you implement connect_to_algo, send_tokens_algo, and send_tokens_eth
 from send_tokens import connect_to_algo, connect_to_eth, send_tokens_algo, send_tokens_eth
 
-from models import Base, Order, TX, Log
+from models import Base, Order, TX
 engine = create_engine('sqlite:///orders.db')
 Base.metadata.bind = engine
 DBSession = sessionmaker(bind=engine)
@@ -154,7 +153,7 @@ def fill_order(order, existing, txes=[]):
 def create_txes(order, amnt):
     tx = {}
     tx['platform'] = order.buy_currency
-    tx['reciever_pk'] = order.receiver_pk
+    tx['receiver_pk'] = order.receiver_pk
     tx['order_id'] = order.id
     tx['order'] = order
     tx['value'] = amnt
@@ -204,10 +203,15 @@ def execute_txes(txes):
     # TODO: 
     #       1. Send tokens on the Algorand and eth testnets, appropriately
     #          We've provided the send_tokens_algo and send_tokens_eth skeleton methods in send_tokens.py
-    tx_ids = send_tokens_eth(w3,sender_sk,eth_txes)
+    eth_txs = send_tokens_eth(w3,sender_sk,eth_txes)
+    algo_txs = send_tokens_algo(w3,sender_sk,algo_txes)
+    join_txs = eth_txs + algo_txs
     #       2. Add all transactions to the TX table
+    for i,tx in enumerate(join_txes):
+        tx_objTX(platform = tx['platform'], receiver_pk = tx['receiver_pk'], order_id = tx['order_id'], order = tx['order'])
+        g.session.add(tx_obj)
+        g.session.commit()
 
-    pass
 #TC Check Signatures    
 def check_sig(payload, sig):
     json_payload = json.dumps(payload)
@@ -305,19 +309,20 @@ def trade():
     result = check_sig(payload, sig)
         # 2. Add the order to the table
     if result:
-        order_obj = Order(sender_pk=payload['sender_pk'], receiver_pk=payload['receiver_pk'],
-                          buy_currency=payload['buy_currency'], sell_currency=payload['sell_currency'],
-                          buy_amount=payload['buy_amount'], sell_amount=payload['sell_amount'], signature=sig)
-        g.session.add(order_obj)
-        g.session.commit()
         # 3a. Check if the order is backed by a transaction equal to the sell_amount (this is new)
         result = check_tx(payload)
         # 3b. Fill the order (as in Exchange Server II) if the order is valid
         if result:
+            rder_obj = Order(sender_pk=payload['sender_pk'], receiver_pk=payload['receiver_pk'],
+            buy_currency=payload['buy_currency'], sell_currency=payload['sell_currency'],
+            buy_amount=payload['buy_amount'], sell_amount=payload['sell_amount'], signature=sig)
+            g.session.add(order_obj)
+            g.session.commit()
             existing = find_match(order_obj)
             if existing is not None:
                 fill_order(order_obj, existing)
                 return jsonify(True)
+
             # 4. Execute the transactions
     else:
       log_message(payload)
