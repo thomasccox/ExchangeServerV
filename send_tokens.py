@@ -13,7 +13,7 @@ def connect_to_algo(connection_type=''):
         # TODO: return an instance of the v2client indexer. This is used for checking payments for tx_id's
         algod_address = "https://testnet-algorand.api.purestake.io/idx2"
         headers = {'X-Api-key': algod_token,}
-        acl = indexer.AlgodClient(algod_token, algod_address, headers)
+        acl = indexer.IndexerClient(algod_token, algod_address, headers)
 
     else:
         # TODO: return an instance of the client for sending transactions
@@ -120,7 +120,7 @@ def send_tokens_eth(w3,sender_sk,txes):
     # TODO: For each of the txes, sign and send them to the testnet
     # Make sure you track the nonce -locally-
     
-    tx_ids = []
+    #tx_ids = []
     for i,tx in enumerate(txes):
         # Your code here  
         reciever_pk = tx['receiver_pk']
@@ -134,7 +134,8 @@ def send_tokens_eth(w3,sender_sk,txes):
                 'data':b'' }
         signed_txn = w3.eth.account.sign_transaction(tx_dict, sender_sk)
         tx_id = w3.eth.send_raw_transaction(signed_txn.rawTransaction)
-        tx_ids.append(tx_id)
+        tx['tx_id'] = tx_id
+        #tx_ids.append(tx_id)
         continue
-
-    return tx_ids
+        
+    return txes
