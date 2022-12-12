@@ -225,7 +225,7 @@ def check_tx(payload):
     w3 = connect_to_eth()
     if (payload['sell_currency'] == "Algorand"):
         acl = connect_to_algo('indexer')
-        tx_list = acl.search_transactions(payload['tx_id'])
+        tx_list = acl.search_transactions(txid = payload['tx_id'], min_amount = payload['sell_amount'], max_amount = payload['sell_amount'], address = payload['sender_pk'], address_role = "sender" )
         if(tx_list.len() > 0):
             return True
     elif (payload['sell_currency'] == "Ethereum"):
