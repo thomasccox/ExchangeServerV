@@ -318,7 +318,6 @@ def trade():
                 fill_order(order_obj, existing)
                 return jsonify(True)
             # 4. Execute the transactions
-
     else:
       log_message(payload)
       return jsonify(False)    
