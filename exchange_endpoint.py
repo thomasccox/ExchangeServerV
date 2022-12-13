@@ -319,6 +319,7 @@ def trade():
             g.session.add(order_obj)
             g.session.commit()
             existing = find_match(order_obj)
+            print(existing)
             if existing is not None:
                 fill_order(order_obj, existing)
                 return jsonify(True)
