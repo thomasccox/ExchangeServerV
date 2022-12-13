@@ -329,7 +329,7 @@ def trade():
       log_message(payload)
       #return jsonify(False)    
         # If all goes well, return jsonify(True). else return jsonify(False)
-    return jsonify(False))
+    return jsonify(False)
 
 
 
