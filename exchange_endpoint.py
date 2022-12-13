@@ -280,7 +280,6 @@ def trade():
     connect_to_blockchains()
     #get_keys()
     if request.method == "POST":
-        print("TEST")
         content = request.get_json(silent=True)
         columns = [ "buy_currency", "sell_currency", "buy_amount", "sell_amount", "platform", "tx_id", "receiver_pk"]
         fields = [ "sig", "payload" ]
