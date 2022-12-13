@@ -37,26 +37,41 @@ def send_tokens_algo( acl, sender_sk, txes):
     # TODO: Return a list of transaction id's
 
     sender_pk = account.address_from_private_key(sender_sk)
+    params = acl.suggested_params()
+    gen_hash = params.gh
+    first_valid_round = params.first
+    tx_fee = params.min_fee
+    last_valid_round = params.last
 
     tx_ids = []
     for i,tx in enumerate(txes):
-        unsigned_tx = "Replace me with a transaction object"
+
+    # Your code here
+    # recv_addr = private_key (receiver_pk)
+        receiver_pk = tx['receiver_pk']
+        tx_amount = tx['value']
+
+        unsigned_tx = transaction.PaymentTxn(acct_addr, tx_fee, first_valid_round, last_valid_round, gen_hash, receiver_pk,
+                                     tx_amount)
 
         # TODO: Sign the transaction
-        signed_tx = "Replace me with a SignedTransaction object"
+        signed_tx = unsigned_tx.sign(sender_sk)
+        
+
         
         try:
             print(f"Sending {tx['amount']} microalgo from {sender_pk} to {tx['receiver_pk']}" )
             
             # TODO: Send the transaction to the testnet
             
-            tx_id = "Replace me with the tx_id"
+            tx_id = transaction.send_transaction(singed_tx)
+            tx['tx_id'] = tx_id
             txinfo = wait_for_confirmation_algo(acl, txid=tx_id )
             print(f"Sent {tx['amount']} microalgo in transaction: {tx_id}\n" )
         except Exception as e:
             print(e)
 
-    return []
+    return txes
 
 # Function from Algorand Inc.
 def wait_for_confirmation_algo(client, txid):
