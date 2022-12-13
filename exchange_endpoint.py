@@ -309,10 +309,12 @@ def trade():
     result = check_sig(payload, sig)
         # 2. Add the order to the table
     if result:
+        print("Sig Check")
         # 3a. Check if the order is backed by a transaction equal to the sell_amount (this is new)
         result = check_tx(payload)
         # 3b. Fill the order (as in Exchange Server II) if the order is valid
         if result:
+            print("Tx Check")
             order_obj = Order(sender_pk=payload['sender_pk'], receiver_pk=payload['receiver_pk'],
             buy_currency=payload['buy_currency'], sell_currency=payload['sell_currency'],
             buy_amount=payload['buy_amount'], sell_amount=payload['sell_amount'], signature=sig)
