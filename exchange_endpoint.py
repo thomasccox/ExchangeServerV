@@ -313,7 +313,7 @@ def trade():
         result = check_tx(payload)
         # 3b. Fill the order (as in Exchange Server II) if the order is valid
         if result:
-            rder_obj = Order(sender_pk=payload['sender_pk'], receiver_pk=payload['receiver_pk'],
+            order_obj = Order(sender_pk=payload['sender_pk'], receiver_pk=payload['receiver_pk'],
             buy_currency=payload['buy_currency'], sell_currency=payload['sell_currency'],
             buy_amount=payload['buy_amount'], sell_amount=payload['sell_amount'], signature=sig)
             g.session.add(order_obj)
