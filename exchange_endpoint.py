@@ -101,7 +101,7 @@ def get_algo_keys():
     # the algorand public/private keys
     mnemonic_secret = "maximum there honey circle slogan shiver auto chronic sphere base hobby repeat success glow trash trophy install rain coast proud country hurry glow absorb bicycle"
     algo_sk = mnemonic.to_private_key(mnemonic_secret)
-    print(algo_sk)
+    #print(algo_sk)
     algo_pk = mnemonic.to_public_key(mnemonic_secret)
     return algo_sk, algo_pk
 
@@ -280,6 +280,7 @@ def trade():
     connect_to_blockchains()
     #get_keys()
     if request.method == "POST":
+        print("TEST")
         content = request.get_json(silent=True)
         columns = [ "buy_currency", "sell_currency", "buy_amount", "sell_amount", "platform", "tx_id", "receiver_pk"]
         fields = [ "sig", "payload" ]
@@ -326,9 +327,9 @@ def trade():
             # 4. Execute the transactions
     else:
       log_message(payload)
-      return jsonify(False)    
+      #return jsonify(False)    
         # If all goes well, return jsonify(True). else return jsonify(False)
-    return jsonify(True)
+    return jsonify(False))
 
 
 
