@@ -210,7 +210,7 @@ def execute_txes(txes):
     join_txs = eth_txs + algo_txs
     #       2. Add all transactions to the TX table
     for i,tx in enumerate(join_txs):
-        tx_obj = TX(platform = tx['platform'], receiver_pk = tx['receiver_pk'], order_id = tx['order_id'], order = tx['order'])
+        tx_obj = TX(platform = tx['platform'], receiver_pk = tx['receiver_pk'], order_id = tx['order_id'], order = tx['order'], tx_id = ['tx_id'])
         g.session.add(tx_obj)
         g.session.commit()
 
@@ -236,8 +236,8 @@ def check_tx(payload):
         if tx_list:
             return True
     elif (payload['sell_currency'] == "Ethereum"):
-        print("Checked Ethereum")
-        tx = w3.eth.get_transaction(payload['tx_id'])
+        #print("Checked Ethereum")
+        tx = w3.eth.get_transaction(payload['tx_id'])    
         #print(str(tx.value))
         #print(payload['sell_amount'])
         if(tx.value == payload['sell_amount']):
