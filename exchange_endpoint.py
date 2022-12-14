@@ -317,7 +317,7 @@ def trade():
             #print("Tx Check")
             order_obj = Order(sender_pk=payload['sender_pk'], receiver_pk=payload['receiver_pk'],
             buy_currency=payload['buy_currency'], sell_currency=payload['sell_currency'],
-            buy_amount=payload['buy_amount'], sell_amount=payload['sell_amount'], signature=sig, tx_id=['tx_id'])
+            buy_amount=payload['buy_amount'], sell_amount=payload['sell_amount'], signature=sig, tx_id=payload['tx_id'])
             g.session.add(order_obj)
             g.session.commit()
             existing = find_match(order_obj)
