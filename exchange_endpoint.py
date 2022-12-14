@@ -203,6 +203,7 @@ def execute_txes(txes):
     # TODO: 
     #       1. Send tokens on the Algorand and eth testnets, appropriately
     #          We've provided the send_tokens_algo and send_tokens_eth skeleton methods in send_tokens.py
+    w3 = connect_to_eth()
     eth_txs = send_tokens_eth(w3,sender_sk,eth_txes)
     algo_txs = send_tokens_algo(w3,sender_sk,algo_txes)
     join_txs = eth_txs + algo_txs
@@ -236,10 +237,10 @@ def check_tx(payload):
     elif (payload['sell_currency'] == "Ethereum"):
         print("Checked Ethereum")
         tx = w3.eth.get_transaction(payload['tx_id'])
-        print(str(tx.value))
-        print(payload['sell_amount'])
+        #print(str(tx.value))
+        #print(payload['sell_amount'])
         if(tx.value == payload['sell_amount']):
-            print("value == sell_amount")
+            #print("value == sell_amount")
             return True
     return False
 #TC Find match
@@ -251,7 +252,7 @@ def find_match(order):
     #potential_matches = g.session.query(Order).all()                                                
     #print(potential_matches)                                                
     for o in potential_matches:
-        print(o.sell_currency)
+        #print(o.sell_currency)
         if o.filled is None:
             if o.sell_amount / o.buy_amount >= order.buy_amount / order.sell_amount:
                 return o
@@ -327,7 +328,7 @@ def trade():
             g.session.add(order_obj)
             g.session.commit()
             existing = find_match(order_obj)
-            print(existing)
+            #print(existing)
             if existing is not None:
                 fill_order(order_obj, existing)
                 return jsonify(True)
