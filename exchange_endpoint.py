@@ -206,7 +206,7 @@ def execute_txes(txes):
     w3 = connect_to_eth()
     acl = connect_to_algo('algod')
     eth_txs = send_tokens_eth(w3,eth_sk,eth_txes)
-    algo_txs = send_tokens_algo(acl,eth_sk,algo_txes)
+    algo_txs = send_tokens_algo(acl,algo_sk,algo_txes)
     join_txs = eth_txs + algo_txs
     #       2. Add all transactions to the TX table
     for i,tx in enumerate(join_txes):
