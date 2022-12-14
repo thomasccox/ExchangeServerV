@@ -237,7 +237,9 @@ def check_tx(payload):
         print("Checked Ethereum")
         tx = w3.eth.get_transaction(payload['tx_id'])
         print(str(tx.value))
-        if(str(tx.value) == payload['sell_amount']):
+        print(payload['sell_amount'])
+        if(tx.value == payload['sell_amount']):
+            print("value == sell_amount")
             return True
     return False
 #TC Find match
