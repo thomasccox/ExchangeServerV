@@ -247,6 +247,7 @@ def find_match(order):
 
     for o in potential_matches:
         if o.filled is None:
+            print(o.sell_amount)
             if o.sell_amount / o.buy_amount >= order.buy_amount / order.sell_amount:
                 return o
     return None
@@ -309,18 +310,18 @@ def trade():
     result = check_sig(payload, sig)
         # 2. Add the order to the table
     if result:
-        print("Sig Check")
+        #print("Sig Check")
         # 3a. Check if the order is backed by a transaction equal to the sell_amount (this is new)
         result = check_tx(payload)
         # 3b. Fill the order (as in Exchange Server II) if the order is valid
         if result:
-            print("Tx Check")
+            #print("Tx Check")
             order_obj = Order(sender_pk=payload['sender_pk'], receiver_pk=payload['receiver_pk'],
             buy_currency=payload['buy_currency'], sell_currency=payload['sell_currency'],
             buy_amount=payload['buy_amount'], sell_amount=payload['sell_amount'], signature=sig)
             g.session.add(order_obj)
             g.session.commit()
-            existing = find_match(order_obj)
+            existing = find_matcxh(order_obj)
             print(existing)
             if existing is not None:
                 fill_order(order_obj, existing)
