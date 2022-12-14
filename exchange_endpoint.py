@@ -209,7 +209,7 @@ def execute_txes(txes):
     algo_txs = send_tokens_algo(acl,algo_sk,algo_txes)
     join_txs = eth_txs + algo_txs
     #       2. Add all transactions to the TX table
-    for i,tx in enumerate(join_txes):
+    for i,tx in enumerate(join_txs):
         tx_objTX(platform = tx['platform'], receiver_pk = tx['receiver_pk'], order_id = tx['order_id'], order = tx['order'])
         g.session.add(tx_obj)
         g.session.commit()
