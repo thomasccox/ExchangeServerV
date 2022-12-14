@@ -321,7 +321,7 @@ def trade():
             buy_amount=payload['buy_amount'], sell_amount=payload['sell_amount'], signature=sig)
             g.session.add(order_obj)
             g.session.commit()
-            existing = find_matcxh(order_obj)
+            existing = find_match(order_obj)
             print(existing)
             if existing is not None:
                 fill_order(order_obj, existing)
