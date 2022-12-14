@@ -37,6 +37,7 @@ def send_tokens_algo( acl, sender_sk, txes):
     # TODO: Return a list of transaction id's
 
     sender_pk = account.address_from_private_key(sender_sk)
+    acct_addr = "https://testnet-algorand.api.purestake.io/ps2"
     print(sender_pk)
     params = acl.suggested_params()
     gen_hash = params.gh
@@ -52,7 +53,7 @@ def send_tokens_algo( acl, sender_sk, txes):
         receiver_pk = tx['receiver_pk']
         tx_amount = tx['value']
 
-        unsigned_tx = transaction.PaymentTxn(sender_pk, tx_fee, first_valid_round, last_valid_round, gen_hash, receiver_pk,
+        unsigned_tx = transaction.PaymentTxn(acct_addr, tx_fee, first_valid_round, last_valid_round, gen_hash, receiver_pk,
                                      tx_amount)
 
         # TODO: Sign the transaction
