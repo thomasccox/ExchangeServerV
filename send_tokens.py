@@ -37,6 +37,7 @@ def send_tokens_algo( acl, sender_sk, txes):
     # TODO: Return a list of transaction id's
 
     sender_pk = account.address_from_private_key(sender_sk)
+    print(sender_pk)
     params = acl.suggested_params()
     gen_hash = params.gh
     first_valid_round = params.first
