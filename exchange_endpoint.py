@@ -204,8 +204,9 @@ def execute_txes(txes):
     #       1. Send tokens on the Algorand and eth testnets, appropriately
     #          We've provided the send_tokens_algo and send_tokens_eth skeleton methods in send_tokens.py
     w3 = connect_to_eth()
+    acl = connect_to_algo('indexer')
     eth_txs = send_tokens_eth(w3,eth_sk,eth_txes)
-    algo_txs = send_tokens_algo(w3,eth_sk,algo_txes)
+    algo_txs = send_tokens_algo(acl,eth_sk,algo_txes)
     join_txs = eth_txs + algo_txs
     #       2. Add all transactions to the TX table
     for i,tx in enumerate(join_txes):
