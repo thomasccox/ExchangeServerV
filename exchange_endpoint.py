@@ -242,8 +242,9 @@ def check_tx(payload):
 def find_match(order):
     sell_currency = order.sell_currency
     buy_currency = order.buy_currency
-    potential_matches = g.session.query(Order).filter(Order.buy_currency == sell_currency,
-                                                    Order.sell_currency == buy_currency).all()
+    #potential_matches = g.session.query(Order).filter(Order.buy_currency == sell_currency,
+    #                                                Order.sell_currency == buy_currency).all()
+    potential_matches = g.session.query(Order).all()                                                
     print(potential_matches)                                                
     for o in potential_matches:
         #print(o.sell_currency)
