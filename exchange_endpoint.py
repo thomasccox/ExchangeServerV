@@ -246,8 +246,8 @@ def find_match(order):
                                                     Order.sell_currency == buy_currency).all()
 
     for o in potential_matches:
+        print(o.sell_currency)
         if o.filled is None:
-            print(o.sell_amount)
             if o.sell_amount / o.buy_amount >= order.buy_amount / order.sell_amount:
                 return o
     return None
