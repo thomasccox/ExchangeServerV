@@ -244,10 +244,10 @@ def find_match(order):
     buy_currency = order.buy_currency
     #potential_matches = g.session.query(Order).filter(Order.buy_currency == sell_currency,
     #                                                Order.sell_currency == buy_currency).all()
-    potential_matches = g.session.query(Order).all()                                                
+    #potential_matches = g.session.query(Order).all()                                                
     print(potential_matches)                                                
     for o in potential_matches:
-        #print(o.sell_currency)
+        print(o.sell_currency)
         if o.filled is None:
             if o.sell_amount / o.buy_amount >= order.buy_amount / order.sell_amount:
                 return o
